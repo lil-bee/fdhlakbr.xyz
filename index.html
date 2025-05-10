@@ -7,6 +7,9 @@
   </head>
   <body>
     <h1>Real-time Visitor Count</h1>
+    <div id="welcome-message" style="display: none">Welcome to my server</div>
+    <!-- Hidden by default -->
+
     <div id="visitor-count">Current visitors: 0</div>
   </body>
   <script>
@@ -14,23 +17,24 @@
     const proto = window.location.protocol === "https" ? "wss" : "ws";
     ws = new WebSocket(`${proto}://${window.location.host}`);
 
-    // Saat menerima pesan dari server (jumlah pengunjung)
-    ws.onmessage = (event) => {
-      console.log(event.data); // Untuk debug di konsol
-      document.getElementById("visitor-count").innerText = event.data; // Update jumlah pengunjung
-    };
-
-    // Saat koneksi WebSocket dibuka
+    // When connection is open, show welcome message
     ws.onopen = function () {
       console.log("Connected to server");
+      document.getElementById("welcome-message").style.display = "block"; // Show the welcome message
     };
 
-    // Saat koneksi WebSocket ditutup
+    // When receiving a message from the server (visitor count)
+    ws.onmessage = (event) => {
+      console.log(event.data); // For debugging in the console
+      document.getElementById("visitor-count").innerText = event.data; // Update visitor count
+    };
+
+    // On WebSocket connection close
     ws.onclose = function () {
       console.log("Disconnected from server");
     };
 
-    // Saat tab atau window akan ditutup, pastikan WebSocket ditutup
+    // Ensure WebSocket is closed when tab/window is closed
     window.onbeforeunload = function () {
       ws.close();
     };
