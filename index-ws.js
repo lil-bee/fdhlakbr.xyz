@@ -27,6 +27,7 @@ wss.on("connection", function connection(ws) {
   }
 
   ws.on("close", function close() {
+    const numClients = wss.clients.size;
     wss.broadcast(`Current visitors: ${numClients}`);
     console.log("A client has disconnected");
   });
